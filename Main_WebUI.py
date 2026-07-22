@@ -341,7 +341,7 @@ _HTML_PAGE = r"""<!DOCTYPE html>
     display: grid;
     grid-template-columns: 420px 1fr;
     gap: 20px;
-    min-height: calc(100vh - 65px);
+    height: calc(100vh - 65px);
   }
 
   .left-col {
@@ -349,6 +349,7 @@ _HTML_PAGE = r"""<!DOCTYPE html>
     flex-direction: column;
     gap: 20px;
     min-height: 0;
+    overflow: hidden;
   }
 
   .card {
@@ -470,7 +471,7 @@ _HTML_PAGE = r"""<!DOCTYPE html>
     flex: 1;
     display: flex;
     flex-direction: column;
-    min-height: 200px;
+    min-height: 0;
   }
   .log-area {
     flex: 1;
@@ -707,7 +708,7 @@ var _allResults = [];
 
 function appendLog(text, cls) {
   const span = document.createElement('span');
-  span.textContent = text + '\\n';
+  span.textContent = text + '\n';
   if (cls) span.className = 'log-line ' + cls;
   logArea.appendChild(span);
   logArea.scrollTop = logArea.scrollHeight;
@@ -802,7 +803,7 @@ async function fetchResults() {
     var html = '';
     for (var i = 0; i < results.length; i++) {
       var r = results[i];
-      var statusText = r.status || '有内容';
+      var statusText = r.status;
       var statusClass = r.status === '链接无效' ? 'color:var(--error)' :
                         r.status === '主页无内容' ? 'color:var(--text-secondary)' :
                         'color:var(--success)';
@@ -839,10 +840,13 @@ function copyColumn(colIdx) {
     var r = _allResults[i];
     var val = colIdx === 0 ? (r.content || '') :
               colIdx === 1 ? (r.email || '') :
-              (r.status || '有内容');
+              (r.status || '');
+    if (val.indexOf('\n') !== -1 || val.indexOf('\"') !== -1 || val.indexOf(',') !== -1) {
+      val = '\"' + val.replace(/\"/g, '\"\"') + '\"';
+    }
     values.push(val);
   }
-  var text = values.join('\\n');
+  var text = values.join('\n');
   navigator.clipboard.writeText(text).then(function() {
     // brief flash feedback — find all copy buttons in this column
     var btns = document.querySelectorAll('#results-table th .copy-col-btn');
