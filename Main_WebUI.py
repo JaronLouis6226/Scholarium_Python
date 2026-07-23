@@ -298,24 +298,23 @@ _HTML_PAGE = r"""<!DOCTYPE html>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #F9F8F6;
+    --bg: #FAf9F5;
     --surface: #FFFFFF;
-    --accent: #D77757;
-    --accent-hover: #C06040;
-    --accent-subtle: rgba(215,119,87,0.06);
-    --text: #1A1A1A;
+    --accent: #D97757;
+    --accent-hover: #B56C4E;
+    --accent-subtle: rgba(204,125,94,0.06);
+    --text: #141413;
     --text-secondary: #6E6E6E;
+    --text-tertiary: #999999;
     --border: #E8E5E0;
-    --input-bg: #FFFFFF;
     --input-border: #D9D4CC;
     --log-bg: #F4F2EE;
     --success: #059669;
     --error: #DC2626;
     --radius: 20px;
     --radius-sm: 8px;
-    --font: "AnthropicSerif", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font: "AnthropicSerif", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
     --font-mono: "SF Mono", "Fira Code", "Fira Mono", Menlo, monospace;
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
     --shadow-card: 0 1px 2px rgba(0,0,0,0.03), 0 2px 8px rgba(0,0,0,0.04);
   }
 
@@ -325,49 +324,72 @@ _HTML_PAGE = r"""<!DOCTYPE html>
     font-weight: 400;
   }
 
+  html { height: 100%; }
+
   body {
+    height: 100%;
     font-family: var(--font);
-    background: var(--bg);
-    color: var(--text);
+    font-size: 14px;
     line-height: 1.65;
-    min-height: 100vh;
+    color: var(--text);
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    gap: 14px;
     -webkit-font-smoothing: antialiased;
   }
 
+  /* Header card */
   .header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 18px;
     background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 20px 32px;
-  }
-  .header-inner {
-    max-width: 1240px;
-    margin: 0 auto;
-    text-align: center;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    flex-shrink: 0;
   }
   .logo {
-    font-size: 33px;
+    font-size: 30px;
     font-weight: 800;
     color: var(--accent);
-    letter-spacing: -0.4px;
+    letter-spacing: -0.3px;
   }
 
+  /* Container */
   .container {
-    max-width: 1240px;
-    margin: 0 auto;
-    padding: 28px 32px;
-    display: grid;
-    grid-template-columns: 440px 1fr;
-    gap: 24px;
-    height: calc(100vh - 73px);
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+    gap: 14px;
   }
 
-  .left-col {
+  /* Left panel */
+  .left-panel {
+    flex: 4;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
     min-height: 0;
+    min-width: 0;
   }
 
+  /* Right panel */
+  .right-panel {
+    flex: 6;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 0;
+    gap: 12px;
+  }
+
+  /* Cards */
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -375,375 +397,471 @@ _HTML_PAGE = r"""<!DOCTYPE html>
     padding: 16px;
     box-shadow: var(--shadow-card);
   }
-  .card-title {
+  .card-stretch {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  /* Section label (replaces card-title) */
+  .section-label {
     font-size: 13px;
     font-weight: 600;
     color: var(--text-secondary);
-    letter-spacing: 0.3px;
-    margin-bottom: 16px;
-    text-transform: none;
     text-align: center;
+    margin-bottom: 12px;
   }
 
+  /* Inputs */
   label {
-    text-align: center;
     display: block;
-    font-size: 15px;
+    font-size: 12px;
     font-weight: 500;
     color: var(--text);
-    margin-bottom: 16px;
+    margin-bottom: 4px;
+    text-align: center;
   }
   textarea, input[type="text"], input[type="number"] {
     width: 100%;
     border: 1px solid var(--input-border);
     border-radius: var(--radius-sm);
     padding: 10px 12px;
-    font-size: 14px;
+    font-size: 12px;
     font-family: var(--font);
     color: var(--text);
-    background: var(--input-bg);
+    background: var(--surface);
     transition: border-color 0.2s, box-shadow 0.2s;
     outline: none;
   }
+  textarea::placeholder, input::placeholder { color: var(--text-tertiary); }
   textarea:focus, input:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(215,119,87,0.1);
+    box-shadow: 0 0 0 3px rgba(204,125,94,0.1);
   }
   textarea {
     resize: vertical;
-    min-height: 150px;
-    font-size: 13px;
+    min-height: 120px;
+    font-size: 12px;
     line-height: 1.6;
   }
 
   .param-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 12px;
+    gap: 8px;
+    margin-bottom: 8px;
   }
-  .param-group { margin-bottom: 14px; }
-  .param-hint {
-    font-size: 12px;
-    color: var(--text-secondary);
-    margin-top: 3px;
-  }
+  .param-group { margin-bottom: 8px; }
+  .param-group label { text-align: left; font-size: 11px; color: var(--text-secondary); }
+  .param-group input { padding: 6px 8px; font-size: 12px; }
+  .param-hint { display: none; }
 
+  /* Buttons */
   .btn {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
-    padding: 10px 20px;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 16px;
     border-radius: var(--radius-sm);
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     border: none;
-    transition: background 0.2s, box-shadow 0.2s;
+    transition: background 0.2s;
     font-family: var(--font);
   }
   .btn-primary {
     background: var(--accent);
     color: #FFF;
+    width: 100%;
   }
   .btn-primary:hover { background: var(--accent-hover); }
+  .btn-primary:active { background: #a05038; }
   .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
   .btn-secondary {
     background: var(--surface);
     color: var(--text);
     border: 1px solid var(--border);
-    box-shadow: var(--shadow-sm);
+    font-size: 12px;
+    font-weight: 500;
+    width: 100%;
   }
   .btn-secondary:hover { background: var(--log-bg); }
+  .btn-secondary:active { background: #eae6e0; }
 
   .btn-row {
     display: flex;
-    gap: 10px;
-    align-items: center;
-    margin-top: 18px;
-    justify-content: center;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
   }
 
+  /* Advanced toggle */
   .advanced-toggle {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 5px;
-    font-size: 13px;
+    padding: 4px 0;
+    cursor: pointer;
+    font-size: 12px;
     font-weight: 500;
     color: var(--text-secondary);
+    user-select: none;
+    transition: color 0.15s;
     background: none;
     border: none;
-    cursor: pointer;
-    padding: 5px 0;
-    margin-bottom: 14px;
-    margin-left: auto;
-    margin-right: auto;
+    font-family: var(--font);
+    margin: 10px auto 8px;
   }
   .advanced-toggle:hover { color: var(--accent); }
   .advanced-toggle .arrow {
     display: inline-block;
-    transition: transform 0.25s;
-    font-size: 11px;
+    transition: transform 0.2s;
+    font-size: 10px;
   }
   .advanced-toggle.open .arrow { transform: rotate(90deg); }
   .advanced-params { display: none; }
   .advanced-params.open { display: block; }
 
-  /* 日志面板 */
+  /* Log area */
   .log-panel {
-    flex: 1;
     display: flex;
     flex-direction: column;
+    flex: 1;
     min-height: 0;
   }
   .log-area {
     flex: 1;
+    min-height: 100px;
+    overflow-y: auto;
     background: var(--log-bg);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
-    padding: 10px 14px;
+    padding: 10px 12px;
     font-family: var(--font-mono);
-    font-size: 12px;
+    font-size: 11px;
     line-height: 1.75;
-    overflow-y: auto;
-    white-space: pre-wrap;
-    overflow-wrap: break-word;
-    word-break: break-word;
-    overflow-x: hidden;
     color: var(--text);
     text-align: center;
-    min-height: 120px;
+    position: relative;
   }
-
+  .log-placeholder {
+    color: var(--text-tertiary);
+    font-size: 12px;
+    text-align: center;
+    line-height: 1.6;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    font-family: var(--font);
+    pointer-events: none;
+  }
+  .log-line {
+    white-space: pre-wrap;
+    word-break: break-all;
+    text-align: left;
+  }
   .log-line.status-ok { color: var(--success); }
   .log-line.status-warn { color: var(--accent); }
   .log-line.status-err { color: var(--error); }
 
   .stat-bar {
     display: flex;
-    gap: 18px;
-    font-size: 13px;
-    color: var(--text-secondary);
-    margin-top: 12px;
-    flex-shrink: 0;
+    gap: 14px;
     justify-content: center;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 8px;
+    flex-shrink: 0;
   }
   .stat-bar strong { color: var(--text); }
 
-  /* 结果表格 */
-  .results-panel {
+  /* Right empty state */
+  .right-empty {
+    flex: 1;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--text-tertiary);
+  }
+  .empty-icon { opacity: 0.35; }
+  .empty-icon svg { width: 32px; height: 32px; }
+  .empty-text { font-size: 13px; text-align: center; line-height: 1.6; }
+
+  /* Results section */
+  .results-section {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
     min-height: 0;
   }
-  .table-wrapper {
+  .results-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 0 0 10px;
+    flex-shrink: 0;
+  }
+  .results-title { font-size: 13px; font-weight: 600; color: var(--text); }
+  .results-summary { font-size: 11px; color: var(--text-secondary); }
+
+  .results-table-wrapper {
     flex: 1;
     overflow: auto;
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
-    background: var(--surface);
+    min-height: 0;
   }
+
   #results-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 13px;
+    font-size: 12px;
     line-height: 1.6;
+    table-layout: fixed;
   }
-  #results-table thead {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-  }
+  #results-table thead { position: sticky; top: 0; z-index: 1; }
   #results-table th {
     text-align: center;
+    padding: 10px 10px;
     background: var(--log-bg);
-    border-bottom: 1.5px solid var(--border);
-    padding: 12px 14px;
     font-weight: 600;
-    color: var(--text);
-    white-space: nowrap;
-    font-size: 13px;
-  }
-  #results-table th .th-label {
-    display: block;
-    margin-bottom: 5px;
-  }
-  .copy-col-btn {
     font-size: 12px;
-    font-weight: 500;
-    color: var(--accent);
-    background: none;
+    color: var(--text);
+    border-bottom: 1.5px solid var(--border);
+    white-space: nowrap;
+  }
+  .th-label { display: block; text-align: center; margin-bottom: 4px; }
+  .th-copy-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    padding: 2px 10px;
     border: 1px solid var(--border);
-    cursor: pointer;
-    padding: 3px 12px;
     border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--accent);
+    font-size: 10px;
+    font-family: var(--font);
+    font-weight: 500;
     line-height: 1.5;
+    cursor: pointer;
     transition: background 0.15s, border-color 0.15s;
   }
-  .copy-col-btn:hover {
-    background: var(--accent-subtle);
-    border-color: var(--accent);
-  }
-  .copy-col-btn:active { background: rgba(215,119,87,0.12); }
+  .th-copy-btn:hover { background: var(--accent-subtle); border-color: var(--accent); }
+  .th-copy-btn.copied { color: var(--success); border-color: var(--success); background: transparent; }
+
   #results-table td {
-    padding: 10px 14px;
+    padding: 8px 10px;
     border-bottom: 1px solid var(--border);
     vertical-align: top;
     color: var(--text);
-  }
-  #results-table td.col-content {
-    max-width: 420px;
-    padding: 0;
-  }
-  .cell-scroll {
-    max-height: 130px;
-    overflow-y: auto;
-    padding: 10px 14px;
-    white-space: pre-wrap;
-    word-break: break-word;
-  }
-  #results-table td.col-email {
-    white-space: nowrap;
-    font-family: var(--font-mono);
-    font-size: 12px;
-  }
-  #results-table td.col-status {
-    white-space: nowrap;
+    overflow: hidden;
   }
   #results-table tbody tr:nth-child(even) { background: rgba(0,0,0,0.015); }
   #results-table tbody tr:hover { background: var(--accent-subtle); }
+  #results-table tr:last-child td { border-bottom: none; }
 
-  @media (max-width: 900px) {
-    .container {
-      grid-template-columns: 1fr;
-      height: auto;
-      min-height: 100vh;
-    }
-    .results-panel { min-height: 400px; }
-    .header { padding: 16px 20px; }
-    .container { padding: 20px; }
+  .col-content { width: 55%; }
+  .col-email   { width: 25%; }
+  .col-status  { width: 20%; }
+
+  .cell-content {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    white-space: normal;
+    word-break: break-all;
   }
-</style>
+  .cell-empty  { color: var(--text-tertiary); font-style: italic; }
+  .cell-email  { font-family: var(--font-mono); font-size: 11px; word-break: break-all; }
+  .cell-status { font-size: 11px; }
+  .status-ok         { color: var(--success); }
+  .status-no-content { color: var(--accent); }
+  .status-error      { color: var(--error); }
+
+  .results-actions { padding: 10px 0 0; flex-shrink: 0; }
+  .results-actions .btn-primary { width: 100%; }
+
+  @media (max-width: 780px) {
+    body { padding: 10px; gap: 10px; }
+    .container { flex-direction: column; }
+    .left-panel { flex: none; width: 100%; }
+    .right-panel { min-height: 400px; }
+  }
 </style>
 </head>
 <body>
-<div class="header">
-  <div class="header-inner">
+  <!-- Header Card -->
+  <header class="header">
     <div class="logo">Scholarium</div>
-  </div>
-</div>
+  </header>
 
-<div class="container">
-  <!-- 左侧：配置 + 日志 -->
-  <div class="left-col">
-    <div class="card">
-      <div class="param-group">
-        <label for="urls">教师主页 URL（每行一个）</label>
-        <textarea id="urls" placeholder="https://example.edu.cn/teacher/zhangsan&#10;https://example.edu.cn/teacher/lisi"></textarea>
-      </div>
+  <div class="container">
+    <!-- Left Panel -->
+    <div class="left-panel">
+      <!-- URL Input Card -->
+      <div class="card">
+        <div class="section-label">教师主页 URL</div>
+        <textarea id="urls" placeholder="粘贴教师主页 URL，每行一个&#10;例如：https://example.edu.cn/teacher/zhangsan" rows="4"></textarea>
 
-      <button class="advanced-toggle" id="advanced-toggle" onclick="toggleAdvanced()">
-        <span class="arrow">▸</span> 高级设置
-      </button>
-
-      <div class="advanced-params" id="advanced-params">
-      <div class="param-row">
-        <div class="param-group">
-          <label for="timeout">请求超时（秒）</label>
-          <input type="number" id="timeout" value="5" min="1" max="60" step="1">
-          <div class="param-hint">默认 5 秒</div>
-        </div>
-        <div class="param-group">
-          <label for="retries">最大重试次数</label>
-          <input type="number" id="retries" value="3" min="0" max="10" step="1">
-          <div class="param-hint">默认 3 次</div>
-        </div>
-      </div>
-
-      <div class="param-row">
-        <div class="param-group">
-          <label for="delay_min">请求间隔下限（秒）</label>
-          <input type="number" id="delay_min" value="0.1" min="0" max="10" step="0.1">
-          <div class="param-hint">默认 0.1 秒</div>
-        </div>
-        <div class="param-group">
-          <label for="delay_max">请求间隔上限（秒）</label>
-          <input type="number" id="delay_max" value="0.5" min="0" max="10" step="0.1">
-          <div class="param-hint">默认 0.5 秒</div>
-        </div>
-      </div>
-
-      <div class="param-row">
-        <div class="param-group">
-          <label for="min_content_len">最小内容长度（字符）</label>
-          <input type="number" id="min_content_len" value="30" min="10" max="500" step="10">
-          <div class="param-hint">默认 30 字符</div>
-        </div>
-        <div class="param-group">
-          <label for="output_filename">输出文件名</label>
-          <input type="text" id="output_filename" value="teachers.xlsx">
-          <div class="param-hint">默认 teachers.xlsx</div>
-        </div>
-      </div>
-      </div>
-
-      <div class="btn-row">
-        <button class="btn btn-primary" id="btn-run" onclick="startCrawl()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          开始采集
+        <button class="advanced-toggle" id="advanced-toggle" onclick="toggleAdvanced()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
+          <span>高级设置</span>
+          <svg class="arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
-        <button class="btn btn-secondary" id="btn-download" onclick="downloadExcel()" disabled>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          下载 Excel
-        </button>
+
+        <div class="advanced-params" id="advanced-params">
+          <div class="param-row">
+            <div class="param-group">
+              <label for="timeout">请求超时（秒）</label>
+              <input type="number" id="timeout" value="5" min="1" max="60" step="1">
+            </div>
+            <div class="param-group">
+              <label for="retries">最大重试次数</label>
+              <input type="number" id="retries" value="3" min="0" max="10" step="1">
+            </div>
+          </div>
+          <div class="param-row">
+            <div class="param-group">
+              <label for="delay_min">最小延迟（秒）</label>
+              <input type="number" id="delay_min" value="0.1" min="0" max="10" step="0.1">
+            </div>
+            <div class="param-group">
+              <label for="delay_max">最大延迟（秒）</label>
+              <input type="number" id="delay_max" value="0.5" min="0" max="10" step="0.1">
+            </div>
+          </div>
+          <div class="param-row">
+            <div class="param-group">
+              <label for="min_content_len">最小内容长度</label>
+              <input type="number" id="min_content_len" value="30" min="10" max="500" step="10">
+            </div>
+            <div class="param-group">
+              <label for="output_filename">输出文件名</label>
+              <input type="text" id="output_filename" value="teachers.xlsx">
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary" id="btn-run" onclick="startCrawl()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 3 19 12 5 21 5 3"/>
+            </svg>
+            开始采集
+          </button>
+          <button class="btn btn-secondary" id="btn-download" onclick="downloadExcel()" disabled>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            导出 Excel
+          </button>
+        </div>
+      </div>
+
+      <!-- Log Card -->
+      <div class="card card-stretch log-panel">
+        <div class="log-area" id="log-area">
+          <div class="log-placeholder" id="log-placeholder">点击"开始采集"后<br>运行日志将显示在此处</div>
+        </div>
+        <div class="stat-bar" id="stat-bar" style="display:none"></div>
       </div>
     </div>
 
-    <div class="card log-panel">
-      <div class="log-area" id="log-area">
+    <!-- Right Panel -->
+    <div class="right-panel">
+      <!-- Empty State -->
+      <div class="card card-stretch" id="right-empty">
+        <div class="right-empty">
+          <div class="empty-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+          </div>
+          <div class="empty-text">采集完成后<br>结果将显示在此处</div>
+        </div>
       </div>
-      <div class="stat-bar" id="stat-bar" style="display:none"></div>
-    </div>
-  </div>
 
-  <!-- 右侧：结果表格 -->
-  <div class="card results-panel" id="results-panel">
-    <div class="table-wrapper">
-      <table id="results-table">
-        <thead>
-          <tr>
-            <th style="width:55%"><span class="th-label">教师简介</span><button class="copy-col-btn" onclick="copyColumn(0)">复制整列</button></th>
-            <th style="width:25%"><span class="th-label">邮箱</span><button class="copy-col-btn" onclick="copyColumn(1)">复制整列</button></th>
-            <th style="width:20%"><span class="th-label">采集状态</span><button class="copy-col-btn" onclick="copyColumn(2)">复制整列</button></th>
-          </tr>
-        </thead>
-        <tbody id="results-tbody"></tbody>
-      </table>
+      <!-- Results Card -->
+      <div class="card card-stretch results-section" id="results-panel" style="display:none">
+        <div class="results-header">
+          <span class="results-title" id="results-title">采集结果</span>
+          <span class="results-summary" id="results-summary"></span>
+        </div>
+        <div class="results-table-wrapper">
+          <table id="results-table">
+            <thead>
+              <tr>
+                <th class="col-content"><span class="th-label">教师简介</span><button class="th-copy-btn" onclick="copyColumn(0)">复制整列</button></th>
+                <th class="col-email"><span class="th-label">邮箱</span><button class="th-copy-btn" onclick="copyColumn(1)">复制整列</button></th>
+                <th class="col-status"><span class="th-label">状态</span><button class="th-copy-btn" onclick="copyColumn(2)">复制整列</button></th>
+              </tr>
+            </thead>
+            <tbody id="results-tbody"></tbody>
+          </table>
+        </div>
+        <div class="results-actions" id="results-actions">
+          <button class="btn btn-primary" id="btn-download-bottom" onclick="downloadExcel()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            导出 Excel
+          </button>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
 <script>
 const logArea = document.getElementById('log-area');
+const logPlaceholder = document.getElementById('log-placeholder');
 const btnRun = document.getElementById('btn-run');
 const btnDownload = document.getElementById('btn-download');
 const statBar = document.getElementById('stat-bar');
 const resultsPanel = document.getElementById('results-panel');
+const rightEmpty = document.getElementById('right-empty');
 const resultsTbody = document.getElementById('results-tbody');
+const resultsSummary = document.getElementById('results-summary');
 
 let eventSource = null;
 var _allResults = [];
 
 function appendLog(text, cls) {
-  const span = document.createElement('span');
-  span.textContent = text + '\n';
-  if (cls) span.className = 'log-line ' + cls;
+  if (logPlaceholder) logPlaceholder.style.display = 'none';
+  const span = document.createElement('div');
+  span.textContent = text;
+  span.className = 'log-line' + (cls ? ' ' + cls : '');
   logArea.appendChild(span);
   logArea.scrollTop = logArea.scrollHeight;
 }
 
 function clearLog() {
-  logArea.innerHTML = '';
+  logArea.querySelectorAll('.log-line').forEach(el => el.remove());
+  if (logPlaceholder) logPlaceholder.style.display = '';
 }
 
 async function startCrawl() {
@@ -752,6 +870,8 @@ async function startCrawl() {
 
   btnRun.disabled = true;
   btnDownload.disabled = true;
+  resultsPanel.style.display = 'none';
+  rightEmpty.style.display = '';
   statBar.style.display = 'none';
   clearLog();
   appendLog('正在启动采集任务…', 'status-warn');
@@ -828,23 +948,30 @@ async function fetchResults() {
       '<span style="color:var(--error)">无效: <strong>' + dead + '</strong></span>';
     statBar.style.display = 'flex';
 
+    resultsSummary.textContent = '共 ' + results.length + ' 条';
+
     var html = '';
     for (var i = 0; i < results.length; i++) {
       var r = results[i];
-      var statusText = r.status;
-      var statusClass = r.status === '链接无效' ? 'color:var(--error)' :
-                        r.status === '主页无内容' ? 'color:var(--text-secondary)' :
-                        'color:var(--success)';
+      var statusText = r.status || '';
+      var statusCls = r.status === '链接无效' ? 'status-error' :
+                      r.status === '主页无内容' ? 'status-no-content' :
+                      'status-ok';
+
       html += '<tr>' +
-        '<td class="col-content"><div class="cell-scroll">' + escHtml(r.content || '') + '</div></td>' +
-        '<td class="col-email">' + escHtml(r.email || '') + '</td>' +
-        '<td class="col-status"><span style="' + statusClass + '">' + escHtml(statusText) + '</span></td>' +
+        '<td class="col-content"><div class="cell-content">' + escHtml(r.content || '') + '</div></td>' +
+        '<td class="col-email"><div class="cell-email">' + escHtml(r.email || '') + '</div></td>' +
+        '<td class="col-status"><div class="cell-status ' + statusCls + '">' + escHtml(statusText) + '</div></td>' +
         '</tr>';
     }
     resultsTbody.innerHTML = html;
 
+    rightEmpty.style.display = 'none';
+    resultsPanel.style.display = 'flex';
+
     if (data.output_file) {
       btnDownload.disabled = false;
+      document.getElementById('btn-download-bottom').disabled = false;
     }
   } catch(e) {
     console.error(e);
@@ -869,23 +996,22 @@ function copyColumn(colIdx) {
     var val = colIdx === 0 ? (r.content || '') :
               colIdx === 1 ? (r.email || '') :
               (r.status || '');
-    if (val.indexOf('\n') !== -1 || val.indexOf('\"') !== -1 || val.indexOf(',') !== -1) {
-      val = '\"' + val.replace(/\"/g, '\"\"') + '\"';
+    if (val.indexOf('\n') !== -1 || val.indexOf('"') !== -1 || val.indexOf(',') !== -1) {
+      val = '"' + val.replace(/"/g, '""') + '"';
     }
     values.push(val);
   }
   var text = values.join('\n');
   navigator.clipboard.writeText(text).then(function() {
-    // brief flash feedback — find all copy buttons in this column
-    var btns = document.querySelectorAll('#results-table th .copy-col-btn');
+    var btns = document.querySelectorAll('.th-copy-btn');
     var btn = btns[colIdx];
     if (btn) {
       var orig = btn.textContent;
       btn.textContent = '已复制';
-      btn.style.color = 'var(--success)';
+      btn.classList.add('copied');
       setTimeout(function() {
         btn.textContent = orig;
-        btn.style.color = '';
+        btn.classList.remove('copied');
       }, 1500);
     }
   }).catch(function(err) {
@@ -899,6 +1025,7 @@ function downloadExcel() {
 </script>
 </body>
 </html>"""
+
 
 
 def main() -> None:
