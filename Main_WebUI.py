@@ -14,7 +14,7 @@ import time
 import webbrowser
 from typing import List, Optional, Tuple
 
-from flask import Flask, Response, jsonify, request, send_file
+from flask import Flask, Response, jsonify, request, send_file, send_from_directory
 
 from src import crawler
 from src import extractor
@@ -47,7 +47,7 @@ def _emit_log(message: str) -> None:
 
 
 # ============================================================================
-# 核心采集逻辑（从 Main_Terminal.py 移植）
+# 核心采集逻辑
 # ============================================================================
 
 def _parse_urls(text: str) -> List[str]:
@@ -190,8 +190,16 @@ def _run_crawl(
 
 @app.route("/")
 def index() -> str:
-    """主页面 —— 内嵌完整前端（Claude 配色）"""
+    """主页面 —— 内嵌完整前端"""
     return _HTML_PAGE
+
+
+@app.route("/font/AnthropicSerif.otf")
+def font_anthropic() -> Response:
+    """提供 AnthropicSerif 字体文件"""
+    import os as _os
+    font_dir = _os.path.join(_os.path.dirname(__file__), "src")
+    return send_from_directory(font_dir, "ANTHROPICSERIF.OTF", mimetype="font/otf")
 
 
 @app.route("/run", methods=["POST"])
@@ -277,7 +285,7 @@ def status() -> Response:
 
 
 # ============================================================================
-# 前端页面（Claude 配色方案）
+# 前端页面
 # ============================================================================
 
 _HTML_PAGE = r"""<!DOCTYPE html>
@@ -285,142 +293,153 @@ _HTML_PAGE = r"""<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Scholarium — 教师主页信息采集</title>
+<title>Scholarium</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #FAFAFA;
+    --bg: #F9F8F6;
     --surface: #FFFFFF;
     --accent: #D77757;
     --accent-hover: #C06040;
-    --text: #141414;
-    --text-secondary: #6B7280;
-    --border: #E5E7EB;
+    --accent-subtle: rgba(215,119,87,0.06);
+    --text: #1A1A1A;
+    --text-secondary: #6E6E6E;
+    --border: #E8E5E0;
     --input-bg: #FFFFFF;
-    --input-border: #D1D5DB;
-    --log-bg: #F9FAFB;
+    --input-border: #D9D4CC;
+    --log-bg: #F4F2EE;
     --success: #059669;
     --error: #DC2626;
-    --radius: 6px;
-    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --radius: 20px;
+    --radius-sm: 8px;
+    --font: "AnthropicSerif", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-mono: "SF Mono", "Fira Code", "Fira Mono", Menlo, monospace;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+    --shadow-card: 0 1px 2px rgba(0,0,0,0.03), 0 2px 8px rgba(0,0,0,0.04);
+  }
+
+  @font-face {
+    font-family: "AnthropicSerif";
+    src: url("/font/AnthropicSerif.otf") format("opentype");
+    font-weight: 400;
   }
 
   body {
     font-family: var(--font);
     background: var(--bg);
     color: var(--text);
-    line-height: 1.6;
+    line-height: 1.65;
     min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
   }
 
   .header {
     background: var(--surface);
     border-bottom: 1px solid var(--border);
-    padding: 16px 24px;
+    padding: 20px 32px;
   }
   .header-inner {
-    max-width: 1200px;
+    max-width: 1240px;
     margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    text-align: center;
   }
   .logo {
-    font-size: 18px;
-    font-weight: 700;
+    font-size: 33px;
+    font-weight: 800;
     color: var(--accent);
-    letter-spacing: -0.3px;
+    letter-spacing: -0.4px;
   }
-  .logo span { color: var(--text-secondary); font-weight: 400; }
 
   .container {
-    max-width: 1200px;
+    max-width: 1240px;
     margin: 0 auto;
-    padding: 24px;
+    padding: 28px 32px;
     display: grid;
-    grid-template-columns: 420px 1fr;
-    gap: 20px;
-    height: calc(100vh - 65px);
+    grid-template-columns: 440px 1fr;
+    gap: 24px;
+    height: calc(100vh - 73px);
   }
 
   .left-col {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
     min-height: 0;
-    overflow: hidden;
   }
 
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 20px;
+    padding: 16px;
+    box-shadow: var(--shadow-card);
   }
   .card-title {
     font-size: 13px;
     font-weight: 600;
     color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 14px;
+    letter-spacing: 0.3px;
+    margin-bottom: 16px;
+    text-transform: none;
+    text-align: center;
   }
 
   label {
+    text-align: center;
     display: block;
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 500;
     color: var(--text);
-    margin-bottom: 4px;
+    margin-bottom: 16px;
   }
   textarea, input[type="text"], input[type="number"] {
     width: 100%;
     border: 1px solid var(--input-border);
-    border-radius: var(--radius);
-    padding: 8px 10px;
-    font-size: 13px;
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    font-size: 14px;
     font-family: var(--font);
     color: var(--text);
     background: var(--input-bg);
-    transition: border-color 0.15s;
+    transition: border-color 0.2s, box-shadow 0.2s;
     outline: none;
   }
   textarea:focus, input:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(215,119,87,0.12);
+    box-shadow: 0 0 0 3px rgba(215,119,87,0.1);
   }
   textarea {
     resize: vertical;
-    min-height: 140px;
-    font-size: 12px;
-    line-height: 1.5;
+    min-height: 150px;
+    font-size: 13px;
+    line-height: 1.6;
   }
 
   .param-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    gap: 12px;
     margin-bottom: 12px;
   }
   .param-group { margin-bottom: 14px; }
   .param-hint {
-    font-size: 11px;
+    font-size: 12px;
     color: var(--text-secondary);
-    margin-top: 2px;
+    margin-top: 3px;
   }
 
   .btn {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 8px 18px;
-    border-radius: var(--radius);
-    font-size: 13px;
+    gap: 7px;
+    padding: 10px 20px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     border: none;
-    transition: background 0.15s;
+    transition: background 0.2s, box-shadow 0.2s;
     font-family: var(--font);
   }
   .btn-primary {
@@ -428,39 +447,43 @@ _HTML_PAGE = r"""<!DOCTYPE html>
     color: #FFF;
   }
   .btn-primary:hover { background: var(--accent-hover); }
-  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
   .btn-secondary {
     background: var(--surface);
     color: var(--text);
     border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
   }
   .btn-secondary:hover { background: var(--log-bg); }
 
   .btn-row {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     align-items: center;
-    margin-top: 16px;
+    margin-top: 18px;
+    justify-content: center;
   }
 
   .advanced-toggle {
     display: flex;
     align-items: center;
-    gap: 4px;
-    font-size: 12px;
+    gap: 5px;
+    font-size: 13px;
     font-weight: 500;
     color: var(--text-secondary);
     background: none;
     border: none;
     cursor: pointer;
-    padding: 4px 0;
-    margin-bottom: 12px;
+    padding: 5px 0;
+    margin-bottom: 14px;
+    margin-left: auto;
+    margin-right: auto;
   }
   .advanced-toggle:hover { color: var(--accent); }
   .advanced-toggle .arrow {
     display: inline-block;
-    transition: transform 0.2s;
-    font-size: 10px;
+    transition: transform 0.25s;
+    font-size: 11px;
   }
   .advanced-toggle.open .arrow { transform: rotate(90deg); }
   .advanced-params { display: none; }
@@ -477,16 +500,19 @@ _HTML_PAGE = r"""<!DOCTYPE html>
     flex: 1;
     background: var(--log-bg);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 12px;
-    font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, monospace;
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-family: var(--font-mono);
     font-size: 12px;
-    line-height: 1.7;
+    line-height: 1.75;
     overflow-y: auto;
     white-space: pre-wrap;
-    word-break: break-all;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    overflow-x: hidden;
     color: var(--text);
-    min-height: 150px;
+    text-align: center;
+    min-height: 120px;
   }
 
   .log-line.status-ok { color: var(--success); }
@@ -495,11 +521,12 @@ _HTML_PAGE = r"""<!DOCTYPE html>
 
   .stat-bar {
     display: flex;
-    gap: 16px;
+    gap: 18px;
     font-size: 13px;
     color: var(--text-secondary);
-    margin-top: 10px;
+    margin-top: 12px;
     flex-shrink: 0;
+    justify-content: center;
   }
   .stat-bar strong { color: var(--text); }
 
@@ -513,13 +540,14 @@ _HTML_PAGE = r"""<!DOCTYPE html>
     flex: 1;
     overflow: auto;
     border: 1px solid var(--border);
-    border-radius: var(--radius);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
   }
   #results-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 12px;
-    line-height: 1.5;
+    font-size: 13px;
+    line-height: 1.6;
   }
   #results-table thead {
     position: sticky;
@@ -527,10 +555,10 @@ _HTML_PAGE = r"""<!DOCTYPE html>
     z-index: 1;
   }
   #results-table th {
+    text-align: center;
     background: var(--log-bg);
-    border-bottom: 2px solid var(--border);
-    padding: 10px 12px;
-    text-align: left;
+    border-bottom: 1.5px solid var(--border);
+    padding: 12px 14px;
     font-weight: 600;
     color: var(--text);
     white-space: nowrap;
@@ -538,65 +566,70 @@ _HTML_PAGE = r"""<!DOCTYPE html>
   }
   #results-table th .th-label {
     display: block;
-    margin-bottom: 4px;
+    margin-bottom: 5px;
   }
   .copy-col-btn {
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 500;
     color: var(--accent);
     background: none;
     border: 1px solid var(--border);
     cursor: pointer;
-    padding: 2px 10px;
-    border-radius: 3px;
+    padding: 3px 12px;
+    border-radius: var(--radius-sm);
     line-height: 1.5;
-    transition: background 0.12s, border-color 0.12s;
+    transition: background 0.15s, border-color 0.15s;
   }
   .copy-col-btn:hover {
-    background: rgba(215,119,87,0.08);
+    background: var(--accent-subtle);
     border-color: var(--accent);
   }
-  .copy-col-btn:active { background: rgba(215,119,87,0.15); }
+  .copy-col-btn:active { background: rgba(215,119,87,0.12); }
   #results-table td {
-    padding: 8px 12px;
+    padding: 10px 14px;
     border-bottom: 1px solid var(--border);
     vertical-align: top;
     color: var(--text);
   }
   #results-table td.col-content {
-    max-width: 400px;
+    max-width: 420px;
     padding: 0;
   }
   .cell-scroll {
-    max-height: 124px;
+    max-height: 130px;
     overflow-y: auto;
-    padding: 8px 12px;
+    padding: 10px 14px;
     white-space: pre-wrap;
     word-break: break-word;
   }
   #results-table td.col-email {
     white-space: nowrap;
-    font-family: "SF Mono", "Fira Code", monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
   }
   #results-table td.col-status {
     white-space: nowrap;
   }
-  #results-table tbody tr:nth-child(even) { background: var(--log-bg); }
-  #results-table tbody tr:hover { background: rgba(215,119,87,0.04); }
+  #results-table tbody tr:nth-child(even) { background: rgba(0,0,0,0.015); }
+  #results-table tbody tr:hover { background: var(--accent-subtle); }
 
-  @media (max-width: 860px) {
+  @media (max-width: 900px) {
     .container {
       grid-template-columns: 1fr;
+      height: auto;
+      min-height: 100vh;
     }
     .results-panel { min-height: 400px; }
+    .header { padding: 16px 20px; }
+    .container { padding: 20px; }
   }
+</style>
 </style>
 </head>
 <body>
 <div class="header">
   <div class="header-inner">
-    <div class="logo">Scholarium <span>— 教师主页信息采集</span></div>
+    <div class="logo">Scholarium</div>
   </div>
 </div>
 
@@ -604,8 +637,6 @@ _HTML_PAGE = r"""<!DOCTYPE html>
   <!-- 左侧：配置 + 日志 -->
   <div class="left-col">
     <div class="card">
-      <div class="card-title">配置参数</div>
-
       <div class="param-group">
         <label for="urls">教师主页 URL（每行一个）</label>
         <textarea id="urls" placeholder="https://example.edu.cn/teacher/zhangsan&#10;https://example.edu.cn/teacher/lisi"></textarea>
@@ -669,9 +700,7 @@ _HTML_PAGE = r"""<!DOCTYPE html>
     </div>
 
     <div class="card log-panel">
-      <div class="card-title">运行日志</div>
       <div class="log-area" id="log-area">
-        <span style="color: var(--text-secondary)">等待开始采集…</span>
       </div>
       <div class="stat-bar" id="stat-bar" style="display:none"></div>
     </div>
@@ -679,7 +708,6 @@ _HTML_PAGE = r"""<!DOCTYPE html>
 
   <!-- 右侧：结果表格 -->
   <div class="card results-panel" id="results-panel">
-    <div class="card-title">采集结果</div>
     <div class="table-wrapper">
       <table id="results-table">
         <thead>
