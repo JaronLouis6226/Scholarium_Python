@@ -99,4 +99,4 @@ Excel 文件包含三列：
 
 
 ## Scholarium 浏览器插件
-本项目还有一个Edge/Chrome浏览器插件版本，详情可跳转`https://github.com/JaronLouis6226/Scholarium`。
+本项目还有一个Edge/Chrome浏览器插件版本，更加便携，没有PDF解析功能，详情可跳转`https://github.com/JaronLouis6226/Scholarium`。
